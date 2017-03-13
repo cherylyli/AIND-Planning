@@ -58,6 +58,14 @@ class AirCargoProblem(Problem):
             :return: list of Action objects
             '''
             loads = []
+            precond_pos = [expr('At(c, a)'), expr('At(p, a)')]
+            precond_neg = [expr('In(c, p)')]
+            effect_add = [expr('In(c, p)')]
+            effect_rem = []
+            loads.append(Action(expr("Load(c, p, a)"), [precond_pos, precond_neg], [effect_add, effect_rem]))
+
+
+
             # TODO create all load ground actions from the domain Load action
             return loads
 
@@ -67,6 +75,13 @@ class AirCargoProblem(Problem):
             :return: list of Action objects
             '''
             unloads = []
+            precond_pos = [expr('At(c, a)'), expr('At(p, a)'), expr('In(c, p)')]
+            precond_neg = []
+            effect_add = []
+            effect_rem = [expr('In(c, p)')]
+            unloads.append(Action(expr("Unload(c, p, a)"), [precond_pos, precond_neg], [effect_add, effect_rem]))
+
+
             # TODO create all Unload ground actions from the domain Unload action
             return unloads
 
