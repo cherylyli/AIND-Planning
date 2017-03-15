@@ -427,11 +427,9 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         '''
-        # TODO test for Inconsistent Effects between nodes
-        a1_effnodes = node_a1.effnodes
-        a2_effnodes = node_a2.effnodes
-        for i_1 in a1_effnodes:
-            for i_2 in a2_effnodes:
+        # for node_a1 and node_a2's effect nodes, has mutex if they overlap
+        for i_1 in node_a1.effnodes:
+            for i_2 in node_a2.effnodes:
                 if (i_1.symbol == i_2.symbol) and (i_1.is_pos == (not i_2.is_pos)):
                     return True
             
@@ -451,7 +449,17 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         '''
-        # TODO test for Interference between nodes
+        # check that each other's prenodes don't overlap with your effnodes
+        for i_1 in node_a2.effnodes:
+            for i_2 in node_a1.prenodes:
+                if (i_1.symbol == i_2.symbol) and (i_1.is_pos == (not i_2.is_pos)):
+                    return True
+
+        for i_1 in node_a1.effnodes:
+            for i_2 in node_a2.prenodes:
+                if (i_1.symbol == i_2.symbol) and (i_1.is_pos == (not i_2.is_pos)):
+                    return True
+
         return False
 
     def competing_needs_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
