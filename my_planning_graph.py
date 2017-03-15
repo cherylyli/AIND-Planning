@@ -474,6 +474,11 @@ class PlanningGraph():
         '''
 
         # TODO test for Competing Needs between nodes
+        for i_1 in node_a1.parents:
+            for i_2 in node_a2.parents:
+                print(i_1.is_mutex(i_2))
+                if i_1.is_mutex(i_2) and i_2.is_mutex(i_1):
+                    return True
         return False
 
     def update_s_mutex(self, nodeset: set):
