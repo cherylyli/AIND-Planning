@@ -128,6 +128,7 @@ class AirCargoProblem(Problem):
         # 
         possible_actions = []
         kb = PropKB()
+        print(state)
         kb.tell(decode_state(state, self.state_map).pos_sentence())
         for action in self.actions_list:
             is_possible = True

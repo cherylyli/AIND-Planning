@@ -311,6 +311,35 @@ class PlanningGraph():
         #   set iff all prerequisite literals for the action hold in S0.  This can be accomplished by testing
         #   to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
+        possible_actions = set()
+        
+        # create list of positive and negative statements
+        precond_pos = []
+        precond_neg = []
+
+        # iterate through the levels
+        for n in self.s_levels[level]:
+            if n.is_pos:
+                precond_pos.append(n.symbol)
+            else:
+                precond_neg.append(n.symbol)
+
+        for action in self.all_actions:
+            is_possible = True
+            for clause in action.precond_pos:
+                if clause not in precond_pos:
+                    is_possible = False
+                    
+            for clause in action.precond_neg:
+                if clause not in precond_neg:
+                    is_possible = False
+                    
+            if is_possible:
+                possible_actions.add(PgNode_a(action))
+
+        self.a_levels.append(possible_actions)
+
+
 
     def add_literal_level(self, level):
         ''' add an S (literal) level to the Planning Graph
@@ -329,6 +358,18 @@ class PlanningGraph():
         #   may be "added" to the set without fear of duplication.  However, it is important to then correctly create and connect
         #   all of the new S nodes as children of all the A nodes that could produce them, and likewise add the A nodes to the
         #   parent sets of the S nodes
+        import copy
+        new_s_level = copy.copy(self.s_levels[level-1])
+        # for each action, apply to remove s_level and add all resulting s nodes to new_s_level
+        for a_node in self.a_levels[level-1]:
+            effects = a_node.effnodes
+            for effect_node in effects:
+                new_s_level.add(effect_node)
+
+        self.s_levels.append(new_s_level)
+
+
+
 
     def update_a_mutex(self, nodeset):
         ''' Determine and update sibling mutual exclusion for A-level nodes
@@ -387,6 +428,13 @@ class PlanningGraph():
         :return: bool
         '''
         # TODO test for Inconsistent Effects between nodes
+        a1_effnodes = node_a1.effnodes
+        a2_effnodes = node_a2.effnodes
+        for i_1 in a1_effnodes:
+            for i_2 in a2_effnodes:
+                if (i_1.symbol == i_2.symbol) and (i_1.is_pos == (not i_2.is_pos)):
+                    return True
+            
         return False
 
     def interference_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
