@@ -549,7 +549,7 @@ class PlanningGraph():
         # get all goals
         goals_not_acheived = self.problem.goal
 
-
+        # iterate through all s_levels and search for first time goal appears
         for ind, s_level in enumerate(self.s_levels):
             if len(goals_not_acheived) == 0:
                 break

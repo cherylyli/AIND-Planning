@@ -302,13 +302,15 @@ def air_cargo_p3() -> AirCargoProblem:
     cargos = ['C1', 'C2', 'C2', 'C4']
     planes = ['P1', 'P2']
     airports = ['JFK', 'SFO', 'ATL', 'ORD']
+
+    
     pos = [
         expr('At(C1, SFO)'),
         expr('At(C2, JFK)'),
         expr('At(C3, ATL)'),
-        expr('At(C4, ORD)'),
+        expr('At(P4, ORD)'),
         expr('At(P1, SFO)'),
-        expr('At(P1, JFK)'),
+        expr('AT(P2, JFK)')
     ]
     neg = [
         expr('At(C2, SFO)'),
